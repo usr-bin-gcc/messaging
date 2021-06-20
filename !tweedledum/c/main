@@ -2,13 +2,15 @@
 
 File        : !Tweedledum.c.main 
 
-Date        : Saturday 5th June 2021
+Date        : Sunday 20th June 2021
 
 Author      : Gavin Cawley
 
 Description : One of a pair of programs to demonstrate inter-task messaging
 
-History     : 05/06/2021 - v1.00 adapted from !throwback application
+History     : 05/06/2021 - v1.00 adapted from !throwback application 
+              20/06/2021 - v1.01 updated to clear text box after message
+                           is entered
 
 *******************************************************************************/
 
@@ -237,7 +239,30 @@ void gui_eventHandler(wimp_eventstr *e, void *handle)
 
                   wimp_sendmessage(wimp_ESEND, &msg, twin);
                }
-            }
+
+               // clear text field
+
+               info.data.indirecttext.buffer[0] = '\0';
+               
+               // re-position caret
+
+               wimp_caretstr caret;
+
+               wimpt_noerr(wimp_get_caret_pos(&caret));
+
+               if (caret.w == gui_handle && caret.i == 2)
+               {
+                  caret.index  = 0;
+                  caret.height = -1;
+
+                  wimpt_noerr(wimp_set_caret_pos(&caret));
+               }
+
+               // prompt redraw of the icon
+
+               wimpt_noerr(wimp_set_icon_state(gui_handle, 2, 
+                           (wimp_iconflags)0, (wimp_iconflags)0)); 
+            }            
          }
 
          break;
